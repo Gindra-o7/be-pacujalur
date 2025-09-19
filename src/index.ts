@@ -1,6 +1,8 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import jalurRouter from './routes/jalur.route';
+import path from 'path';
 
 dotenv.config();
 
@@ -13,6 +15,8 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use(jalurRouter);
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Welcome to Paju Jalur API!');
