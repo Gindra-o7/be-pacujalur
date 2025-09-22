@@ -5,9 +5,23 @@ import { Medsos } from "../types/medsos.type";
 import { Galeri } from "../types/galeri.type";
 
 export default class JalurRepository {
-  public static async find(): Promise<Jalur[]> {
-    const result = await db.query("SELECT * FROM jalur");
-    return result.rows;
+  public static async findAll(offset: number, limit: number): Promise<{ data: Jalur[]; total: number }> {
+    const countQuery = "SELECT COUNT(*) as total FROM jalur";
+    const countResult = await db.query(countQuery);
+    const total = parseInt(countResult.rows[0].total);
+
+    const query = `
+      SELECT id, nama, desa, kecamatan, kabupaten, provinsi, deskripsi
+      FROM jalur
+      ORDER BY nama
+      LIMIT $1 OFFSET $2
+    `;
+    const result = await db.query(query, [limit, offset]);
+
+    return {
+      data: result.rows,
+      total,
+    };
   }
 
   public static async create(data: CreateJalurRequest): Promise<Jalur & { medsos: Medsos[]; galeri: Galeri[] }> {
