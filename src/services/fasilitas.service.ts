@@ -8,14 +8,14 @@ export default class FasilitasService {
   public static async getAll(page: number, limit: number): Promise<PaginatedResponse<Fasilitas>> {
     const offset = PaginationHelper.getOffset(page, limit);
     const { data, total } = await FasilitasRepository.findAll(offset, limit);
-    
+
     return PaginationHelper.buildPaginatedResponse(data, page, limit, total);
   }
 
   public static async getByPenginapanId(penginapanId: string): Promise<Fasilitas[]> {
     const penginapanExists = await PenginapanRepository.exists(penginapanId);
     if (!penginapanExists) {
-      throw new Error('Penginapan not found');
+      throw new Error("Penginapan not found");
     }
 
     return await FasilitasRepository.findByPenginapanId(penginapanId);
@@ -28,7 +28,7 @@ export default class FasilitasService {
   public static async push(data: CreateFasilitasRequest): Promise<Fasilitas> {
     const penginapanExists = await PenginapanRepository.exists(data.penginapan_id);
     if (!penginapanExists) {
-      throw new Error('Penginapan not found');
+      throw new Error("Penginapan not found");
     }
 
     return await FasilitasRepository.create(data);
@@ -43,7 +43,7 @@ export default class FasilitasService {
     if (data.penginapan_id && data.penginapan_id !== fasilitas.penginapan_id) {
       const penginapanExists = await PenginapanRepository.exists(data.penginapan_id);
       if (!penginapanExists) {
-        throw new Error('Penginapan not found');
+        throw new Error("Penginapan not found");
       }
     }
 

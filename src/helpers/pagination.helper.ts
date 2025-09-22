@@ -5,20 +5,15 @@ export default class PaginationHelper {
     return (page - 1) * limit;
   }
 
-  public static buildPaginatedResponse<T>(
-    data: T[],
-    page: number,
-    limit: number,
-    total: number
-  ): PaginatedResponse<T> {
+  public static buildPaginatedResponse<T>(data: T[], page: number, limit: number, total: number): PaginatedResponse<T> {
     return {
       data,
       pagination: {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit)
-      }
+        totalPages: Math.ceil(total / limit),
+      },
     };
   }
 

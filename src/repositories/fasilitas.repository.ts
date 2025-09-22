@@ -3,7 +3,7 @@ import { Fasilitas, CreateFasilitasRequest, UpdateFasilitasRequest } from "../ty
 
 export default class FasilitasRepository {
   public static async findAll(offset: number, limit: number): Promise<{ data: Fasilitas[]; total: number }> {
-    const countQuery = 'SELECT COUNT(*) as total FROM fasilitas';
+    const countQuery = "SELECT COUNT(*) as total FROM fasilitas";
     const countResult = await db.query(countQuery);
     const total = parseInt(countResult.rows[0].total);
 
@@ -17,7 +17,7 @@ export default class FasilitasRepository {
 
     return {
       data: result.rows,
-      total
+      total,
     };
   }
 
@@ -74,7 +74,7 @@ export default class FasilitasRepository {
 
     const query = `
       UPDATE fasilitas
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${paramCount}
       RETURNING id, nama, penginapan_id
     `;
@@ -84,13 +84,13 @@ export default class FasilitasRepository {
   }
 
   public static async delete(id: string): Promise<boolean> {
-    const query = 'DELETE FROM fasilitas WHERE id = $1';
+    const query = "DELETE FROM fasilitas WHERE id = $1";
     const result = await db.query(query, [id]);
-    return ( result.rowCount ?? 0) > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   public static async deleteByPenginapanId(penginapanId: string): Promise<number> {
-    const query = 'DELETE FROM fasilitas WHERE penginapan_id = $1';
+    const query = "DELETE FROM fasilitas WHERE penginapan_id = $1";
     const result = await db.query(query, [penginapanId]);
     return result.rowCount ?? 0;
   }

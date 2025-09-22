@@ -3,7 +3,7 @@ import { Penginapan, CreatePenginapanRequest, UpdatePenginapanRequest } from "..
 
 export default class PenginapanRepository {
   public static async findAll(offset: number, limit: number): Promise<{ data: Penginapan[]; total: number }> {
-    const countQuery = 'SELECT COUNT(*) as total FROM penginapan';
+    const countQuery = "SELECT COUNT(*) as total FROM penginapan";
     const countResult = await db.query(countQuery);
     const total = parseInt(countResult.rows[0].total);
 
@@ -17,7 +17,7 @@ export default class PenginapanRepository {
 
     return {
       data: result.rows,
-      total
+      total,
     };
   }
 
@@ -37,16 +37,8 @@ export default class PenginapanRepository {
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id, nama, tipe, harga, image_url, deskripsi, rating, maps_url
     `;
-    const values = [
-      data.nama,
-      data.tipe,
-      data.harga,
-      data.image_url,
-      data.deskripsi,
-      data.rating,
-      data.maps_url
-    ];
-    
+    const values = [data.nama, data.tipe, data.harga, data.image_url, data.deskripsi, data.rating, data.maps_url];
+
     const result = await db.query(query, values);
     return result.rows[0];
   }
@@ -93,7 +85,7 @@ export default class PenginapanRepository {
 
     const query = `
       UPDATE penginapan
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${paramCount}
       RETURNING id, nama, tipe, harga, image_url, deskripsi, rating, maps_url
     `;
@@ -103,13 +95,13 @@ export default class PenginapanRepository {
   }
 
   public static async delete(id: string): Promise<boolean> {
-    const query = 'DELETE FROM penginapan WHERE id = $1';
+    const query = "DELETE FROM penginapan WHERE id = $1";
     const result = await db.query(query, [id]);
     return (result.rowCount ?? 0) > 0;
   }
 
   public static async exists(id: string): Promise<boolean> {
-    const query = 'SELECT 1 FROM penginapan WHERE id = $1';
+    const query = "SELECT 1 FROM penginapan WHERE id = $1";
     const result = await db.query(query, [id]);
     return result.rows.length > 0;
   }

@@ -1,6 +1,6 @@
 import { PoolClient } from "pg";
 import db from "../infrastructures/db.infrastructure";
-import { CreateJalurRequest, Jalur} from "../types/jalur.type";
+import { CreateJalurRequest, Jalur } from "../types/jalur.type";
 import { Medsos } from "../types/medsos.type";
 import { Galeri } from "../types/galeri.type";
 

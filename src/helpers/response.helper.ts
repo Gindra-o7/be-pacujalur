@@ -15,20 +15,20 @@ export default class ResponseHelper {
     const response: ApiResponse = {
       success: false,
       message,
-      error
+      error,
     };
     return res.status(statusCode).json(response);
   }
 
-  public static notFound(res: Response, message: string = 'Resource not found'): Response {
+  public static notFound(res: Response, message: string = "Resource not found"): Response {
     return this.error(res, message, 404);
   }
 
-  public static badRequest(res: Response, message: string = 'Bad request', error?: string): Response {
+  public static badRequest(res: Response, message: string = "Bad request", error?: string): Response {
     return this.error(res, message, 400, error);
   }
 
-  public static created<T>(res: Response, data: T, message: string = 'Created successfully'): Response {
+  public static created<T>(res: Response, data: T, message: string = "Created successfully"): Response {
     return this.success(res, data, message, 201);
   }
 }
