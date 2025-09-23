@@ -1,13 +1,19 @@
 import { Request, Response } from "express";
 import JalurService from "../services/jalur.service";
+import ResponseHelper from "../helpers/response.helper";
+import PaginationHelper from "../helpers/pagination.helper";
 
 export default class JalurHandler {
-  public static async get(req: Request, res: Response) {
+  public static async getAll(req: Request, res: Response): Promise<Response> {
     try {
-      const result = await JalurService.get();
-      res.status(200).json(result);
+      const { page, limit } = PaginationHelper.parsePaginationQuery(req.query);
+
+      const result = await JalurService.getAll(page, limit);
+
+      return ResponseHelper.success(res, result, "Data jalur berhasil didapatkan");
     } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+      console.error("Error get all data jalur:", error);
+      return ResponseHelper.error(res, "Gagal mendapatkan data jalur");
     }
   }
 
