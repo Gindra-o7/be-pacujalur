@@ -6,6 +6,7 @@ import globalRouter from './routes/global.route';
 import jalurRouter from './routes/jalur.route';
 import penginapanRouter from './routes/penginapan.route';
 import fasilitasRouter from './routes/fasilitas.route';
+import galeriRouter from './routes/galeri.route';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(globalRouter);
 app.use(jalurRouter);
 app.use(penginapanRouter);
 app.use(fasilitasRouter);
+app.use(galeriRouter);
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
