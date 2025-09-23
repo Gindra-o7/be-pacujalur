@@ -4,19 +4,19 @@ import { Fasilitas, CreateFasilitasRequest, UpdateFasilitasRequest } from "../ty
 export default class FasilitasRepository {
   public static async findAll(offset: number, limit: number): Promise<{ data: Fasilitas[]; total: number }> {
     const countQuery = "SELECT COUNT(*) as total FROM fasilitas";
-    const countResult = await db.query(countQuery);
-    const total = parseInt(countResult.rows[0].total);
+    const [countResult]: any = await db.query(countQuery);
+    const total = parseInt(countResult[0].total);
 
     const query = `
       SELECT f.id, f.nama, f.penginapan_id
       FROM fasilitas f
       ORDER BY f.nama
-      LIMIT $1 OFFSET $2
+      LIMIT ? OFFSET ?
     `;
-    const result = await db.query(query, [limit, offset]);
+    const [result]: any = await db.query(query, [limit, offset]);
 
     return {
-      data: result.rows,
+      data: result,
       total,
     };
   }
@@ -25,44 +25,44 @@ export default class FasilitasRepository {
     const query = `
       SELECT id, nama, penginapan_id
       FROM fasilitas
-      WHERE penginapan_id = $1
+      WHERE penginapan_id = ?
       ORDER BY nama
     `;
-    const result = await db.query(query, [penginapanId]);
-    return result.rows;
+    const [result]: any = await db.query(query, [penginapanId]);
+    return result;
   }
 
   public static async findById(id: string): Promise<Fasilitas | null> {
     const query = `
       SELECT id, nama, penginapan_id
       FROM fasilitas
-      WHERE id = $1
+      WHERE id = ?
     `;
-    const result = await db.query(query, [id]);
-    return result.rows[0] || null;
+    const [result]: any = await db.query(query, [id]);
+    return result[0] || null;
   }
 
   public static async create(data: CreateFasilitasRequest): Promise<Fasilitas> {
     const query = `
       INSERT INTO fasilitas (nama, penginapan_id)
-      VALUES ($1, $2)
-      RETURNING id, nama, penginapan_id
+      VALUES (?, ?)
     `;
-    const result = await db.query(query, [data.nama, data.penginapan_id]);
-    return result.rows[0];
+    await db.query(query, [data.nama, data.penginapan_id]);
+    
+    const [created]: any = await db.query("SELECT * FROM fasilitas WHERE id = LAST_INSERT_ID()");
+    return created[0];
   }
 
   public static async update(id: string, data: UpdateFasilitasRequest): Promise<Fasilitas | null> {
     const updates: string[] = [];
     const values: any[] = [];
-    let paramCount = 1;
 
     if (data.nama !== undefined) {
-      updates.push(`nama = $${paramCount++}`);
+      updates.push(`nama = ?`);
       values.push(data.nama);
     }
     if (data.penginapan_id !== undefined) {
-      updates.push(`penginapan_id = $${paramCount++}`);
+      updates.push(`penginapan_id = ?`);
       values.push(data.penginapan_id);
     }
 
@@ -75,23 +75,22 @@ export default class FasilitasRepository {
     const query = `
       UPDATE fasilitas
       SET ${updates.join(", ")}
-      WHERE id = $${paramCount}
-      RETURNING id, nama, penginapan_id
+      WHERE id = ?
     `;
 
-    const result = await db.query(query, values);
-    return result.rows[0] || null;
+    await db.query(query, values);
+    return this.findById(id);
   }
 
   public static async delete(id: string): Promise<boolean> {
-    const query = "DELETE FROM fasilitas WHERE id = $1";
-    const result = await db.query(query, [id]);
-    return (result.rowCount ?? 0) > 0;
+    const query = "DELETE FROM fasilitas WHERE id = ?";
+    const [result]: any = await db.query(query, [id]);
+    return result.affectedRows > 0;
   }
 
   public static async deleteByPenginapanId(penginapanId: string): Promise<number> {
-    const query = "DELETE FROM fasilitas WHERE penginapan_id = $1";
-    const result = await db.query(query, [penginapanId]);
-    return result.rowCount ?? 0;
+    const query = "DELETE FROM fasilitas WHERE penginapan_id = ?";
+    const [result]: any = await db.query(query, [penginapanId]);
+    return result.affectedRows;
   }
 }
